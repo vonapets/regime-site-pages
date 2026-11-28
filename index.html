@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>US market regime</title>
+<meta name="description" content="Today's US market regime and six stress indicators. Personal research, not investment advice.">
+<meta name="theme-color" content="#0b0d10">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <h1>US Market Regime</h1>
+      <span class="brand-sub">Regime and stress indicators</span>
+    </div>
+    <nav class="views" role="tablist" aria-label="Views">
+      <button type="button" role="tab" id="tab-dash" data-view="dash" aria-controls="view-dash" aria-selected="true">Dashboard</button>
+      <button type="button" role="tab" id="tab-history" data-view="history" aria-controls="view-history" aria-selected="false" tabindex="-1">History</button>
+      <button type="button" role="tab" id="tab-methods" data-view="methods" aria-controls="view-methods" aria-selected="false" tabindex="-1">Methods</button>
+      <button type="button" role="tab" id="tab-log" data-view="log" aria-controls="view-log" aria-selected="false" tabindex="-1">Build log</button>
+    </nav>
+    <div class="stamp" id="stamp" aria-live="polite"></div>
+  </header>
+  <p id="error" class="banner" role="alert" hidden></p>
+
+  <main id="main">
+    <!-- Dashboard -->
+    <section id="view-dash" class="view" role="tabpanel" aria-labelledby="tab-dash">
+      <div class="kpis" id="kpis" aria-label="Today"></div>
+
+      <div class="row row-main">
+        <section class="panel chart-panel" aria-labelledby="chart-title">
+          <div class="panel-head">
+            <div class="head-text">
+              <h2 id="chart-title">SPY total return</h2>
+              <p class="panel-sub" id="chart-sub"></p>
+            </div>
+            <div class="ranges seg" role="group" aria-label="Chart range">
+              <button type="button" data-range="1M">1M</button>
+              <button type="button" data-range="3M">3M</button>
+              <button type="button" data-range="6M">6M</button>
+              <button type="button" data-range="YTD">YTD</button>
+              <button type="button" data-range="1Y" aria-pressed="true">1Y</button>
+              <button type="button" data-range="3Y">3Y</button>
+              <button type="button" data-range="5Y">5Y</button>
+              <button type="button" data-range="All">All</button>
+            </div>
+          </div>
+          <div class="series-tabs" id="series-tabs" role="tablist" aria-label="Chart series"></div>
+          <div class="readout" id="readout" aria-hidden="true"></div>
+          <p class="sr" id="chart-help">Arrow keys move the crosshair. Plus and minus zoom. Zero resets the range. The History view lists the same dates.</p>
+          <div id="chart" tabindex="0" aria-describedby="chart-help"></div>
+          <div class="chart-key" id="chart-key"></div>
+          <p id="chart-live" class="sr" aria-live="polite"></p>
+        </section>
+      </div>
+
+      <section class="panel ind-panel" aria-labelledby="ind-title">
+        <div class="panel-head">
+          <div class="head-text">
+            <h2 id="ind-title">Stress indicators</h2>
+            <p class="panel-sub">Percentiles are point-in-time: each day is ranked against sessions from 2008 up to that day. Select a row to chart it.</p>
+          </div>
+        </div>
+        <div class="tablewrap">
+          <table class="ind" id="ind"></table>
+        </div>
+      </section>
+
+      <section class="panel turb-panel" id="turb-panel" aria-labelledby="turb-title" hidden>
+        <div class="panel-head">
+          <div class="head-text">
+            <h2 id="turb-title">Cross-asset turbulence</h2>
+            <p class="panel-sub">How unusual moves are across seven asset classes, and a two-state model fitted to it. This panel holds the page's only next-state odds.</p>
+          </div>
+        </div>
+        <div id="turb"></div>
+      </section>
+
+      <div class="row row-regime">
+        <section class="panel tape-panel" aria-labelledby="tape-title">
+          <div class="panel-head">
+            <div class="head-text">
+              <h2 id="tape-title">Regime history</h2>
+              <p class="panel-sub">One mark per session. 2008 to 2010 is the first training window; from 2011 each label comes from a model fit only on earlier years.</p>
+            </div>
+          </div>
+          <div id="tape"></div>
+        </section>
+        <section class="panel next-panel" aria-labelledby="next-title">
+          <div class="panel-head">
+            <div class="head-text">
+              <h2 id="next-title">What came next, by regime</h2>
+              <p class="panel-sub">SPY over the following 15 sessions, out-of-sample sessions since 2011</p>
+            </div>
+          </div>
+          <div id="next"></div>
+          <div id="spells"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section id="view-history" class="view" role="tabpanel" aria-labelledby="tab-history" hidden>
+      <section class="panel">
+        <div class="panel-head">
+          <div class="head-text">
+            <h2>Daily history</h2>
+            <p class="panel-sub" id="hist-cap"></p>
+          </div>
+          <div class="hist-tools">
+            <div class="seg" role="group" aria-label="History range" id="hist-ranges">
+              <button type="button" data-hrange="3M">3M</button>
+              <button type="button" data-hrange="1Y" aria-pressed="true">1Y</button>
+              <button type="button" data-hrange="5Y">5Y</button>
+              <button type="button" data-hrange="All">All</button>
+            </div>
+            <button type="button" class="btn" id="csv">Download CSV</button>
+          </div>
+        </div>
+        <div class="tablewrap tall">
+          <table class="hist" id="hist"></table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Methods -->
+    <section id="view-methods" class="view" role="tabpanel" aria-labelledby="tab-methods" hidden>
+      <div class="panel prose">
+        <h2>In short</h2>
+        <p>A statistical model labels each US trading day calm, elevated or crisis, using only data up to that day. The page shows today's label, its history, six stress indicators and a cross-asset turbulence panel. The regime label does not forecast the next state. The turbulence panel's two-state model is the page's only next-state forecast.</p>
+
+        <h2>The regime model</h2>
+        <ul>
+          <li><b>Inputs</b>, daily: log of VIX / VIX3M, log of VVIX / VIX, the 20-session change in HYG / IEF total return, SPY's 10-session realized volatility, and SPY's daily total return.</li>
+          <li><b>Model</b>: a 3-state continuous statistical jump model (Python package <code>jumpmodels</code> 0.1.1). Inputs are clipped at 3 standard deviations and standardised on the training years only. States are ordered by SPY volatility: calm, elevated, crisis.</li>
+          <li><b>Jump penalty</b> 0.707, fixed in advance by a rule: the smallest value on a grid whose labels on 2008–2010 last at least 21 sessions on average.</li>
+          <li><b>No hindsight</b>: each day's label comes from a forward filter that uses data up to that day only. The model is refitted once a year on all data up to the previous year-end, and those fits are then frozen. From 2011 on, the label uses a model fit only on earlier data. 2008–2010 is the first training window.</li>
+          <li><b>Mix</b>: the filter's mix of the three states, on a 0.05 grid. It is not a probability.</li>
+          <li><b>Lag</b>: on US data, from a hindsight calm-to-stress break to the first live off-calm label, the median delay was 2 sessions. A quarter of breaks took 39 sessions or more, and the longest took 437. Labels can be late, especially at the start of a stress period.</li>
+        </ul>
+
+        <h2>Cross-asset turbulence</h2>
+        <ul>
+          <li><b>Turbulence</b> (Kritzman and Li, 2010): for each week, how far the log total returns of seven ETFs (SPY, EFA, TLT, HYG, GLD, UUP, DBC) sit from their average, measured against how they usually move together. This is the squared Mahalanobis distance. The average and covariance use only earlier weeks, at least 104 of them, so a value never changes later. Big moves raise it, and so do unusual combinations, like stocks and bonds falling together. The daily version uses at least 250 earlier sessions; the panel shows its 5-session average. Weeks end at the Friday close.</li>
+          <li><b>Regime model</b> (Kritzman, Page and Turkington, 2012): a two-state hidden Markov model on the square root of weekly turbulence, each state with its own mean and spread, fitted by maximum likelihood on every completed week and refitted each build. "Chance now" is the filtered probability, from data up to the last completed week. The odds 1, 4 and 13 weeks ahead come from the fitted switching rates.</li>
+          <li><b>What it says</b>: it forecasts how big moves are likely to be, not their direction. In a check on 2010 to 2026 weekly data, the 4 weeks after turbulent weeks had realized volatility about 60% higher than after normal weeks, while drops beyond the VIX-implied move were not more common, because VIX had already risen. The switching rates are fitted on the whole sample, so past points on the chance line use today's fit.</li>
+        </ul>
+
+        <h2>Indicator zones and percentiles</h2>
+        <p>Zones are fixed rules, not model output. VIX / VIX3M uses fixed levels: watch from 0.95, stress from 1.00. VVIX and VVIX / VIX are stressed when high: watch from the 80th percentile since 2008, stress from the 95th. HYG / IEF and RSP / SPY, over 20 sessions, are stressed when low: watch at or below the 20th percentile, stress at or below the 5th. The 10-year minus 2-year yield is context only.</p>
+        <p>Every percentile on the page is point-in-time: a day is ranked only against sessions from 2008 up to and including that day, the same way today's reading is ranked. Earlier versions of the chart ranked past days against data through today, so later data moved old readings. A percentile line starts after its first 252 sessions.</p>
+
+        <h2>What came next</h2>
+        <p>For each indicator, "SPY next 15 sessions" collects past sessions since 2008 whose percentile was within 5 points of today's, and reports SPY's largest fall from its running peak over the following 15 sessions: the median and the worst 10%. "Independent" counts samples at least 30 sessions apart. The regime table does the same for sessions by label since 2011. These describe the past; they are not forecasts.</p>
+
+        <h2>How to read this page</h2>
+        <ul>
+          <li>The label describes today, from data up to today. It is not a forecast of the next state.</li>
+          <li>The turbulence regime odds are a forecast, from switching rates fitted on past weeks. Read them as how long rough conditions tend to last, not as a call on direction.</li>
+          <li>Labels can be late at the start of a stress period (see Lag above), so read them next to the indicators.</li>
+        </ul>
+        <h2>Reproducibility</h2>
+        <p>The site runs the research code unchanged, with the yearly regime models frozen. A parity test checks that the site's labels and the three-state mix equal the research output, and the daily build re-checks them on a fixed set of past dates before publishing.</p>
+        <p>These are results on past data. They are not instructions to buy or sell.</p>
+      </div>
+    </section>
+
+    <!-- Build log -->
+    <section id="view-log" class="view" role="tabpanel" aria-labelledby="tab-log" hidden>
+      <div class="panel prose">
+        <div id="log-facts"></div>
+        <h2>Notes</h2>
+        <ul id="log-notes"></ul>
+        <h2>Sources</h2>
+        <p>Cboe (VIX, VIX3M, VIX9D, VVIX daily history), FRED (VIX3M before 2009-09-18 as VXVCLS, STLFSI4, NFCI, T10Y2Y), Yahoo Finance (SPY, HYG, IEF, RSP close and dividends; MOVE; for the turbulence panel, SPY, EFA, TLT, HYG, GLD, UUP and DBC close and dividends). Rebuilt each weekday after the US close. No price or index-level history is published: the charts show ratios, percentiles, an SPY total-return index rebased to 100, model output, and the 10-year minus 2-year yield as published by FRED. VIX and VVIX levels appear as today's readings only.</p>
+        <p>Charts by <a href="https://www.tradingview.com/">TradingView</a>. The library is Apache-2.0. The logo on the chart is its attribution.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Personal research. Not investment advice.</footer>
+</div>
+<!-- Charts: TradingView Lightweight Charts 5.3.0, Apache-2.0. License: vendor/lightweight-charts.LICENSE. Keep the logo. -->
+<script src="vendor/lightweight-charts.standalone.production.js"></script>
+<script src="app.js"></script>
+<noscript>This page needs JavaScript to read the data files and draw the charts.</noscript>
+</body>
+</html>
